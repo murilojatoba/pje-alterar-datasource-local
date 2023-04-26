@@ -1,11 +1,10 @@
-const fs = require('fs/promises');
-const { exitCode } = require('process');
+const fs = require('fs');
 const process = require('process');
 
-const pathPje = '/tmp/';
-const pathDS = pathPje + 'Datasources/'
-const prefixoPrincipal = 'pjekz';
-const prefixoSeguranca = 'pje-seguranca';
+const pathPje = '/usr/local/pje/';
+const pathDS = pathPje + 'workspace-eclipse/Datasources/teste/'
+const prefixoPrincipal = 'pjekz-ds';
+const prefixoSeguranca = 'pjekz-seguranca-ds';
 const sufixoLocahost = '-LOCALHOST';
 const sufixoDevlocal = '-DEVLOCAL';
 const sufixoDev = '-DEV';
@@ -22,7 +21,7 @@ const dsSegurancaDev = () => prefixoSeguranca + sufixoDev + extensao;
 const dsSegurancaDevlocal = () => prefixoSeguranca + sufixoDevlocal + extensao;
 
 async function renomearArquivo(oldFile, newFile) {
-    console.log('Renomeando', oldFile, 'para', newFile);
+    console.log('   Renomeando', oldFile, 'para', newFile);
     await fs.rename(pathDS + oldFile, pathDS + newFile, (error) => {
         if (error) throw error
     });
@@ -33,8 +32,6 @@ async function renomearBasePrincipal(de, para) {
 
     await renomearArquivo(dsPrincipal(), de);
     await renomearArquivo(para, dsPrincipal());
-
-    console.log('Ambiente configurado!');
 }
 
 async function renomearBaseSeguranca(de, para) {
@@ -42,8 +39,6 @@ async function renomearBaseSeguranca(de, para) {
 
     await renomearArquivo(dsSeguranca(), de);
     await renomearArquivo(para, dsSeguranca());
-
-    console.log('Ambiente configurado!');
 }
 
 const paramOrigem = process.argv[2] ? process.argv[2].toLowerCase() : null;
@@ -92,5 +87,10 @@ switch (paramDestino) {
         break;
 }
 
-renomearBasePrincipal(arqOrigemPrincipal, arqDestinoPrincipal);
-renomearBaseSeguranca(arqOrigemSeguranca, arqDestinoSeguranca);
+async function executar(){
+    await renomearBasePrincipal(arqOrigemPrincipal, arqDestinoPrincipal);
+    await renomearBaseSeguranca(arqOrigemSeguranca, arqDestinoSeguranca);
+    console.log('Ambiente configurado!');
+}
+
+executar();
